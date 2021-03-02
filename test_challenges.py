@@ -40,7 +40,7 @@ class KnapsackTests(unittest.TestCase):
 
     def test_knapsack_dp(self):
         """Test the bottom-up version of Knapsack."""
-        # self.assertEqual(knapsack_dp(self.items1, 50), 230)
+        self.assertEqual(knapsack_dp(self.items1, 50), 230)
         self.assertEqual(knapsack_dp(self.items2, 8), 8)
 
 

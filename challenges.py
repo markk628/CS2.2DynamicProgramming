@@ -30,7 +30,6 @@ def lcs_dp(strA, strB):
     for i in range(rows):
         for j in range(cols):
             if i == 0 or j == 0:
-                # dp_table[i][j] = 0
                 continue
             if strA[i-1] == strB[j-1]:
                 dp_table[i][j] = dp_table[i-1][j-1] + 1
@@ -41,7 +40,19 @@ def lcs_dp(strA, strB):
 def knapsack(items, capacity):
     """Return the maximum value that can be stored in the knapsack using the
     items given."""
-    pass
+    if len(items) == 0 or capacity == 0:
+        return 0
+    
+    first_item_weight = items[0][1]
+    first_item_value = items[0][2]
+
+    value_with = first_item_value + knapsack(items[1:], capacity-first_item_weight)
+    value_without = knapsack(items[1:], capacity)
+
+    if first_item_weight > capacity:
+        return value_without
+
+    return max(value_with, value_without)
 
 def knapsack_dp(items, capacity):
     """Return the maximum value that can be stored in the knapsack using the
@@ -51,12 +62,35 @@ def knapsack_dp(items, capacity):
     dp_table = [[0 for j in range(cols)] for i in range(rows)]
 
     # TODO: Fill in the table using a nested for loop.
+    for i in range(rows):
+        for j in range(cols):
+            if i == 0 or j == 0:
+                continue
+            if items[i - 1][1] > j:
+                dp_table[i][j] = dp_table[i - 1][j]
+            else:
+                value_with = items[i - 1][2] + dp_table[i - 1][j - items[i - 1][1]]
+                value_without = dp_table[i - 1][j]
+                dp_table[i][j] = max(value_with, value_without)
 
     return dp_table[rows-1][cols-1]
     
 def edit_distance(str1, str2):
     """Compute the Edit Distance between 2 strings."""
-    pass
+    if str1 == "" and str2 == "":
+        return 0
+    elif str1 == "":
+        return len(str2)
+    elif str2 == "":
+        return len(str1)
+
+    if str1[-1] == str2[-1]:
+        return edit_distance(str1[:-1], str2[:-1])
+    else:
+        i = edit_distance(str1, str2[:-1])
+        d = edit_distance(str1[:-1], str2)
+        r = edit_distance(str1[:-1], str2[:-1])
+        return 1 + min(i, d, r)
 
 def edit_distance_dp(str1, str2):
     """Compute the Edit Distance between 2 strings."""
@@ -65,5 +99,16 @@ def edit_distance_dp(str1, str2):
     dp_table = [[0 for j in range(cols)] for i in range(rows)]
 
     # TODO: Fill in the table using a nested for loop.
-
+    for i in range(rows):
+        for j in range(cols):
+            if i == 0:
+                dp_table[i][j] = 1 + dp_table[i-1][j]
+                continue
+            elif j == 0:
+                dp_table[i][j] = 1 + dp_table[i][j-1]
+                continue
+            if str1[i-1] != str2[j-1]:
+                dp_table[i][j] = 1 + min(dp_table[i-1][j], dp_table[i][j-1], dp_table[i-1][j-1])
+            else:
+                dp_table[i][j] = dp_table[i-1][j-1]
     return dp_table[rows-1][cols-1]
